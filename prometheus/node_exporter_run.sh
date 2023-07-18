@@ -1,0 +1,1 @@
+nohup /data/app/node_exporter-linux-amd64/node_exporter &
