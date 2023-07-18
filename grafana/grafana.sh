@@ -1,1 +1,1 @@
-docker run -d -p 3011:3000 --name grafana grafana/grafana-enterprise:8.2.0
+docker run -d -p 3000:3000 --name grafana grafana/grafana-enterprise:8.2.0
