@@ -6,4 +6,4 @@ SRC=https://github.com/prometheus/node_exporter/releases/download/v$VERSION/node
 wget $SRC -O $DEST_FILE
 [ ! -e $DEST_INSTALL ] && mkdir $DEST_INSTALL
 tar -xf $DEST_FILE -C $DEST_INSTALL
-mv $DEST_INSTALL/node_exporter-$VERSION.linux-amd64 $DEST_INSTALL/node_exporter-$VERSION.linux-amd64
+mv $DEST_INSTALL/node_exporter-$VERSION.linux-amd64 $DEST_INSTALL/node_exporter-linux-amd64
