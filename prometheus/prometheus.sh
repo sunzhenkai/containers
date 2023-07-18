@@ -1,7 +1,7 @@
 mkdir -p /data/containers/prometheus
 cp prometheus.yml /data/containers/prometheus/
 docker run -d \
-    --privilege=true \
+    --privileged=true \
     -p 9090:9090 \
     -v /data/containers/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
     -v /data/containers/prometheus:/prometheus \
