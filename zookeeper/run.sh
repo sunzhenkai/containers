@@ -1,0 +1,1 @@
+docker run --name zookeeper --restart always -d -p 2181:2181 -p 2888:2888 -p 3888:3888 -p 18085:8080 zookeeper

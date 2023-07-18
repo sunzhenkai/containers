@@ -1,0 +1,1 @@
+docker run --name phpmyadmin -d -e PMA_ARBITRARY=1 -p 3012:80 phpmyadmin
