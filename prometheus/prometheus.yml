@@ -26,4 +26,4 @@ scrape_configs:
     # scheme defaults to 'http'.
 
     static_configs:
-      - targets: ["172.18.1.1:9100","172.18.1.1:9323"]  # node_exporter, docker
+      - targets: ["172.17.0.1:9100","172.17.0.1:9323"]  # node_exporter, docker
