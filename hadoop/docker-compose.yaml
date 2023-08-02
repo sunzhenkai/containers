@@ -27,7 +27,7 @@ services:
         - data:/data
         # - ./hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
       environment:
-          ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
+          ENSURE_NAMENODE_DIR: "/data/dfs/name"
       networks:
         default:
           ipv4_address: 172.50.0.2
