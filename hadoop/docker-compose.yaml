@@ -1,32 +1,69 @@
 version: "2"
+networks:
+  default:
+      driver: bridge
+      ipam:
+          config:
+              - subnet: "172.50.0.0/24"
+                gateway: "172.50.0.1"
+volumes:
+  data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /data/docker/hadoop/data
 services:
    namenode:
       image: apache/hadoop:3
       hostname: namenode
       command: ["hdfs", "namenode"]
+      restart: always
       ports:
         - 9870:9870
       env_file:
         - ./config
+      volumes:
+        - data:/data
+        # - ./hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
       environment:
           ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
+      networks:
+        default:
+          ipv4_address: 172.50.0.2
    datanode:
       image: apache/hadoop:3
       command: ["hdfs", "datanode"]
+      restart: always
       env_file:
         - ./config      
+      networks:
+        default:
+          ipv4_address: 172.50.0.3
+      volumes:
+        - data:/data
    resourcemanager:
       image: apache/hadoop:3
       hostname: resourcemanager
       command: ["yarn", "resourcemanager"]
+      restart: always
       ports:
          - 8088:8088
       env_file:
         - ./config
+      networks:
+        default:
+          ipv4_address: 172.50.0.4
       volumes:
-        - ./test.sh:/opt/test.sh
+        - data:/data
    nodemanager:
       image: apache/hadoop:3
       command: ["yarn", "nodemanager"]
+      restart: always
       env_file:
         - ./config
+      networks:
+        default:
+          ipv4_address: 172.50.0.5
+      volumes:
+        - data:/data
