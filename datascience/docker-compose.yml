@@ -68,10 +68,15 @@ services:
     volumes:
       - data:/data
   development_node:
-    image: sunzhenkai/development:0.0.1
+    image: sunzhenkai/development:0.0.3
+    command: ["/sbin/init"]
     restart: always
+    privileged: true
     networks:
       default:
         ipv4_address: 172.50.0.6
+    ports:
+      - 2025:22
+      - 8085:8085
     volumes:
       - data:/data

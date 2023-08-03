@@ -1,3 +1,0 @@
-[submodule "development/env"]
-	path = development/env
-	url = git@github.com:sunzhenkai/env-init.git
