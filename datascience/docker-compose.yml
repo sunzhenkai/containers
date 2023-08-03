@@ -1,0 +1,77 @@
+version: "2"
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.50.0.0/24"
+          gateway: "172.50.0.1"
+volumes:
+  data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /data/docker/datascience/data
+services:
+  hadoop_namenode:
+    image: apache/hadoop:3
+    hostname: namenode
+    command: ["hdfs", "namenode"]
+    restart: always
+    ports:
+      - 9870:9870
+    env_file:
+      - ./config/hadoop/config
+    volumes:
+      - data:/data
+      # - ./hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+    environment:
+      ENSURE_NAMENODE_DIR: "/data/dfs/name"
+    networks:
+      default:
+        ipv4_address: 172.50.0.2
+  hadoop_datanode:
+    image: apache/hadoop:3
+    command: ["hdfs", "datanode"]
+    restart: always
+    env_file:
+      - ./config/hadoop/config
+    networks:
+      default:
+        ipv4_address: 172.50.0.3
+    volumes:
+      - data:/data
+  hadoop_resourcemanager:
+    image: apache/hadoop:3
+    hostname: resourcemanager
+    command: ["yarn", "resourcemanager"]
+    restart: always
+    ports:
+      - 8088:8088
+    env_file:
+      - ./config/hadoop/config
+    networks:
+      default:
+        ipv4_address: 172.50.0.4
+    volumes:
+      - data:/data
+  hadoop_nodemanager:
+    image: apache/hadoop:3
+    command: ["yarn", "nodemanager"]
+    restart: always
+    env_file:
+      - ./config/hadoop/config
+    networks:
+      default:
+        ipv4_address: 172.50.0.5
+    volumes:
+      - data:/data
+  development_node:
+    image: sunzhenkai/development:0.0.1
+    restart: always
+    networks:
+      default:
+        ipv4_address: 172.50.0.6
+    volumes:
+      - data:/data

@@ -1,3 +1,9 @@
+# features:
+#   1. 固定 ip
+#   2. 定义 data 路径
+
+# 修改: 
+# 1. volumes data 的路径
 version: "2"
 networks:
   default:
