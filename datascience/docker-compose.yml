@@ -19,6 +19,12 @@ volumes:
       o: bind
       type: none
       device: /data/docker/datascience/data/kafka
+  hadoop:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /data/docker/datascience/data/hadoop
   mariadb:
     driver: local
     driver_opts:
@@ -104,23 +110,25 @@ volumes:
       type: none
       device: /data/docker/datascience/data/flink
 services:
-  hadoop_namenode:
+  hadoop-namenode:
     image: apache/hadoop:3
     hostname: namenode
     command: ["hdfs", "namenode"]
     restart: always
     ports:
       - 9870:9870
+      - 8020:8020
+      - 8020:8020/udp
     env_file:
       - ./config/hadoop/config
     volumes:
-      - data:/data
+      - hadoop:/data
       # - ./hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
     environment:
       ENSURE_NAMENODE_DIR: "/data/dfs/name"
     networks:
       - default
-  hadoop_datanode:
+  hadoop-datanode:
     image: apache/hadoop:3
     command: ["hdfs", "datanode"]
     restart: always
@@ -129,8 +137,8 @@ services:
     networks:
       - default
     volumes:
-      - data:/data
-  hadoop_resourcemanager:
+      - hadoop:/data
+  hadoop-resourcemanager:
     image: apache/hadoop:3
     hostname: resourcemanager
     command: ["yarn", "resourcemanager"]
@@ -142,8 +150,8 @@ services:
     networks:
       - default
     volumes:
-      - data:/data
-  hadoop_nodemanager:
+      - hadoop:/data
+  hadoop-nodemanager:
     image: apache/hadoop:3
     command: ["yarn", "nodemanager"]
     restart: always
@@ -152,8 +160,8 @@ services:
     networks:
       - default
     volumes:
-      - data:/data
-  development_node:
+      - hadoop:/data
+  development-node:
     image: sunzhenkai/development:0.0.3
     command: ["/sbin/init"]
     restart: always
