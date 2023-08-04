@@ -97,6 +97,12 @@ volumes:
       o: bind
       type: none
       device: /data/docker/datascience/data/dolphinscheduler-resource-local
+  flink:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /data/docker/datascience/data/flink
 services:
   hadoop_namenode:
     image: apache/hadoop:3
@@ -211,8 +217,20 @@ services:
       - FLINK_CFG_REST_BIND__ADDRESS=0.0.0.0
     networks:
       - default
+    volumes:
+      - ./config/flink/master:/bitnami/flink/conf/master
+      - ./config/flink/flink-conf.yaml:/bitnami/flink/conf/flink-conf.yaml
+      - ./config/flink/log4j-console.properties:/bitnami/flink/conf/log4j-console.properties
+      - ./config/flink/log4j-session.properties:/bitnami/flink/conf/log4j-session.properties
+      - ./config/flink/log4j.properties:/bitnami/flink/conf/log4j.properties
+      - ./config/flink/logback-console.xml:/bitnami/flink/conf/logback-console.xml
+      - ./config/flink/logback-session.xml:/bitnami/flink/conf/logback-session.xml
+      - ./config/flink/logback.xml:/bitnami/flink/conf/logback.xml
+      - ./config/flink/workers:/bitnami/flink/conf/workers
+      - ./config/flink/zoo.cfg:/bitnami/flink/conf/zoo.cfg
   flink-taskmanager:
     image: docker.io/bitnami/flink:1
+    user: root
     ports:
       - 8221:6121
       - 8222:6122
@@ -221,16 +239,30 @@ services:
       - FLINK_JOB_MANAGER_RPC_ADDRESS=flink-jobmanager
     networks:
       - default
-  flink-taskmanager-b:
-    image: docker.io/bitnami/flink:1
-    ports:
-      - 8225:6121
-      - 8226:6122
-    environment:
-      - FLINK_MODE=taskmanager
-      - FLINK_JOB_MANAGER_RPC_ADDRESS=flink-jobmanager
-    networks:
-      - default
+    volumes:
+      - ./config/flink/master:/bitnami/flink/conf/master
+      - ./config/flink/flink-conf.yaml:/bitnami/flink/conf/flink-conf.yaml
+      - ./config/flink/log4j-console.properties:/bitnami/flink/conf/log4j-console.properties
+      - ./config/flink/log4j-session.properties:/bitnami/flink/conf/log4j-session.properties
+      - ./config/flink/log4j.properties:/bitnami/flink/conf/log4j.properties
+      - ./config/flink/logback-console.xml:/bitnami/flink/conf/logback-console.xml
+      - ./config/flink/logback-session.xml:/bitnami/flink/conf/logback-session.xml
+      - ./config/flink/logback.xml:/bitnami/flink/conf/logback.xml
+      - ./config/flink/workers:/bitnami/flink/conf/workers
+      - ./config/flink/zoo.cfg:/bitnami/flink/conf/zoo.cfg
+  # flink-taskmanager-b:
+  #   image: docker.io/bitnami/flink:1
+  #   ports:
+  #     - 8225:6121
+  #     - 8226:6122
+  #   environment:
+  #     - FLINK_MODE=taskmanager
+  #     - FLINK_JOB_MANAGER_RPC_ADDRESS=flink-jobmanager
+  #   networks:
+  #     - default
+  #   volumes:
+  #     - ./config/flink/master:/bitnami/flink/conf/master
+  #     - ./config/flink/flink-conf.yaml:/bitnami/flink/conf/flink-conf.yaml
   kafka:
     image: docker.io/bitnami/kafka:3.5
     ports:
