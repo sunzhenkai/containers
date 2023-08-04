@@ -42,7 +42,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: /data/docker/datascience/data/consul
+      device: /data/docker/datascience/data/zookeeper
   postgresql:
     driver: local
     driver_opts:
@@ -67,12 +67,12 @@ volumes:
       o: bind
       type: none
       device: /data/docker/datascience/data/grafana
-  harbor-core:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/harbor-core
+  # harbor-core:
+  #   driver: local
+  #   driver_opts:
+  #     o: bind
+  #     type: none
+  #     device: /data/docker/datascience/data/harbor-core
   dolphinscheduler-worker-data:
     driver: local
     driver_opts:
@@ -221,9 +221,16 @@ services:
       - FLINK_JOB_MANAGER_RPC_ADDRESS=jobmanager
     networks:
       - default
-    deploy:
-      mode: replicated
-      replicas: 2
+  flink-taskmanager-b:
+    image: docker.io/bitnami/flink:1
+    ports:
+      - 8225:6121
+      - 8226:6122
+    environment:
+      - FLINK_MODE=taskmanager
+      - FLINK_JOB_MANAGER_RPC_ADDRESS=jobmanager
+    networks:
+      - default
   kafka:
     image: docker.io/bitnami/kafka:3.5
     ports:
@@ -248,12 +255,15 @@ services:
     volumes:
       - consul:/bitnami/consul
     ports:
-      - '8200:8300'
-      - '8201:8301'
-      - '8201:8301/udp'
-      - '8250:8500'
-      - '8260:8600'
-      - '8260:8600/udp'
+      - '8300:8300'
+      - '8301:8301'
+      - '8301:8301/udp'
+      - '8500:8500'
+      - '8600:8600'
+      - '8600:8600/udp'
+    environment:
+      - CONSUL_DISABLE_KEYRING_FILE=true
+      - CONSUL_BIND_ADDR=127.0.0.1
     networks:
       - default
   clickhouse:
@@ -373,21 +383,21 @@ services:
       - grafana:/opt/bitnami/grafana/data
     networks:
       - default
-  harbor-core:
-    image: docker.io/bitnami/harbor-core:2
-    ports:
-      - 8208:8080
-    environment:
-      - LOG_LEVEL=info
-      - CONFIG_PATH=/etc/core/app.conf
-      - CORE_SECRET=not-a-secure-core-secret
-      - JOBSERVICE_SECRET=not-a-secure-jobservice-secret
-    volumes:
-      - ./config/habor-core/app.conf:/etc/core/app.conf:ro
-      - ./config/habor-core/private_key.pem:/etc/core/private_key.pem:ro
-      - harbor-core:/data
-    networks:
-      - default
+  # harbor-core:
+  #   image: docker.io/bitnami/harbor-core:2
+  #   ports:
+  #     - 8228:8080
+  #   environment:
+  #     - LOG_LEVEL=info
+  #     - CONFIG_PATH=/etc/core/app.conf
+  #     - CORE_SECRET=not-a-secure-core-secret
+  #     - JOBSERVICE_SECRET=not-a-secure-jobservice-secret
+  #   volumes:
+  #     - ./config/habor-core/app.conf:/etc/core/app.conf:ro
+  #     - ./config/habor-core/private_key.pem:/etc/core/private_key.pem:ro
+  #     - harbor-core:/data
+  #   networks:
+  #     - default
   zookeeper:
     image: docker.io/bitnami/zookeeper:3.8
     ports:
