@@ -1,3 +1,15 @@
+# Init
+## dolphinscheduler
+```shell
+$ docker exec -it datascience-postgresql-1 bash
+$ psql -U postgres
+postgres=# CREATE DATABASE dolphinscheduler;
+postgres=# CREATE ROLE root WITH CREATEDB CREATEROLE LOGIN SUPERUSER PASSWORD 'root';
+$ docker run datascience-dolphinscheduler-schema-initializer-1
+$ docker rm datascience-dolphinscheduler-schema-initializer-1
+$ docker compose start # 启动 dolphinscheduler
+```
+
 # Spark
 ## Submit Task
 ```shell

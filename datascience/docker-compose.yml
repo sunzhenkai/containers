@@ -96,7 +96,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: /data/docker/datascience/data/dolphinscheduler-resource-local 
+      device: /data/docker/datascience/data/dolphinscheduler-resource-local
 services:
   hadoop_namenode:
     image: apache/hadoop:3
@@ -218,7 +218,7 @@ services:
       - 8222:6122
     environment:
       - FLINK_MODE=taskmanager
-      - FLINK_JOB_MANAGER_RPC_ADDRESS=jobmanager
+      - FLINK_JOB_MANAGER_RPC_ADDRESS=flink-jobmanager
     networks:
       - default
   flink-taskmanager-b:
@@ -228,7 +228,7 @@ services:
       - 8226:6122
     environment:
       - FLINK_MODE=taskmanager
-      - FLINK_JOB_MANAGER_RPC_ADDRESS=jobmanager
+      - FLINK_JOB_MANAGER_RPC_ADDRESS=flink-jobmanager
     networks:
       - default
   kafka:
@@ -252,6 +252,7 @@ services:
       - default
   consul:
     image: docker.io/bitnami/consul:1
+    user: root
     volumes:
       - consul:/bitnami/consul
     ports:
@@ -400,6 +401,7 @@ services:
   #     - default
   zookeeper:
     image: docker.io/bitnami/zookeeper:3.8
+    user: root
     ports:
       - '2181:2181'
     volumes:
@@ -416,9 +418,11 @@ services:
       
   # dolphinscheduler
   dolphinscheduler-schema-initializer:
-    image: ghcr.io/apache/dolphinscheduler/dolphinscheduler-tools:latest
-    profiles: ["schema"]
+    image: apache/dolphinscheduler-tools:latest
+    profiles: ["init"]
     command: [ tools/bin/upgrade-schema.sh ]
+    env_file:
+      - ./config/dolphinscheduler/env
     depends_on:
       postgresql:
         condition: service_healthy
@@ -429,11 +433,12 @@ services:
     networks:
       - default
   dolphinscheduler-api:
-    image: ghcr.io/apache/dolphinscheduler/dolphinscheduler-api:latest
+    image: apache/dolphinscheduler-api:latest
+    env_file:
+      - ./config/dolphinscheduler/env
     ports:
       - "12345:12345"
       - "25333:25333"
-    profiles: ["all"]
     healthcheck:
       test: [ "CMD", "curl", "http://localhost:12345/dolphinscheduler/actuator/health" ]
       interval: 30s
@@ -449,8 +454,9 @@ services:
     networks:
       - default
   dolphinscheduler-alert:
-    image: ghcr.io/apache/dolphinscheduler/dolphinscheduler-alert-server:latest
-    profiles: ["all"]
+    image: apache/dolphinscheduler-alert-server:latest
+    env_file:
+      - ./config/dolphinscheduler/env
     healthcheck:
       test: [ "CMD", "curl", "http://localhost:50053/actuator/health" ]
       interval: 30s
@@ -464,8 +470,9 @@ services:
     networks:
       - default
   dolphinscheduler-master:
-    image: ghcr.io/apache/dolphinscheduler/dolphinscheduler-master:latest
-    profiles: ["all"]
+    image: apache/dolphinscheduler-master:latest
+    env_file:
+      - ./config/dolphinscheduler/env
     healthcheck:
       test: [ "CMD", "curl", "http://localhost:5679/actuator/health" ]
       interval: 30s
@@ -480,8 +487,9 @@ services:
     networks:
       - default
   dolphinscheduler-worker:
-    image: ghcr.io/apache/dolphinscheduler/dolphinscheduler-worker:latest
-    profiles: ["all"]
+    image: apache/dolphinscheduler-worker:latest
+    env_file:
+      - ./config/dolphinscheduler/env
     healthcheck:
       test: [ "CMD", "curl", "http://localhost:1235/actuator/health" ]
       interval: 30s

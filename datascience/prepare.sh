@@ -8,3 +8,7 @@ mkdir -p /data/docker/datascience/data/grafana
 mkdir -p /data/docker/datascience/data/harbor-core
 mkdir -p /data/docker/datascience/data/consul
 mkdir -p /data/docker/datascience/data/mariadb
+mkdir -p /data/docker/datascience/data/dolphinscheduler-worker-data
+mkdir -p /data/docker/datascience/data/dolphinscheduler-logs
+mkdir -p /data/docker/datascience/data/dolphinscheduler-shared-local
+mkdir -p /data/docker/datascience/data/dolphinscheduler-resource-local
