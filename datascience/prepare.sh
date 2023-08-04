@@ -1,0 +1,10 @@
+mkdir -p /data/docker/datascience/data/
+mkdir -p /data/docker/datascience/data/kafka
+mkdir -p /data/docker/datascience/data/clickhouse
+mkdir -p /data/docker/datascience/data/postgresql
+mkdir -p /data/docker/datascience/data/redis
+mkdir -p /data/docker/datascience/data/mongodb
+mkdir -p /data/docker/datascience/data/grafana
+mkdir -p /data/docker/datascience/data/harbor-core
+mkdir -p /data/docker/datascience/data/consul
+mkdir -p /data/docker/datascience/data/mariadb
