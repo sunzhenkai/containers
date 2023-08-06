@@ -549,3 +549,5 @@ services:
       - dolphinscheduler-resource-local:/dolphinscheduler
     networks:
       - default
+  azkaban-web-server:
+  azkaban-executor:
