@@ -73,12 +73,6 @@ volumes:
       o: bind
       type: none
       device: /data/docker/datascience/data/grafana
-  # harbor-core:
-  #   driver: local
-  #   driver_opts:
-  #     o: bind
-  #     type: none
-  #     device: /data/docker/datascience/data/harbor-core
   dolphinscheduler-worker-data:
     driver: local
     driver_opts:
@@ -394,7 +388,7 @@ services:
     networks:
       - default
   mariadb:
-    image: docker.io/bitnami/mariadb:11.0
+    image: docker.io/bitnami/mariadb:10.9.7
     ports:
       - '3306:3306'
     volumes:
@@ -428,21 +422,6 @@ services:
       - grafana:/opt/bitnami/grafana/data
     networks:
       - default
-  # harbor-core:
-  #   image: docker.io/bitnami/harbor-core:2
-  #   ports:
-  #     - 8228:8080
-  #   environment:
-  #     - LOG_LEVEL=info
-  #     - CONFIG_PATH=/etc/core/app.conf
-  #     - CORE_SECRET=not-a-secure-core-secret
-  #     - JOBSERVICE_SECRET=not-a-secure-jobservice-secret
-  #   volumes:
-  #     - ./config/habor-core/app.conf:/etc/core/app.conf:ro
-  #     - ./config/habor-core/private_key.pem:/etc/core/private_key.pem:ro
-  #     - harbor-core:/data
-  #   networks:
-  #     - default
   zookeeper:
     image: docker.io/bitnami/zookeeper:3.8
     user: root
@@ -549,5 +528,20 @@ services:
       - dolphinscheduler-resource-local:/dolphinscheduler
     networks:
       - default
+  azkaban-executor-server:
+    image: sunzhenkai/azkaban-executor-server:839965af353368824435254f1b23b00e9937c24a
+    restart: always
+    environment:
+      AZKABAN_MYSQL_HOST: mariadb
+    networks:
+      - default
   azkaban-web-server:
-  azkaban-executor:
+    image: sunzhenkai/azkaban-web-server:839965af353368824435254f1b23b00e9937c24a
+    restart: always
+    environment:
+      AZKABAN_MYSQL_HOST: mariadb
+    networks:
+      - default
+    depends_on:
+      azkaban-executor-server:
+        condition: service_healthy
