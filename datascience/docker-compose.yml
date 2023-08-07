@@ -268,7 +268,7 @@ services:
   kafka:
     image: docker.io/bitnami/kafka:3.5
     ports:
-      - 8292:9092
+      - 9092:9092
     volumes:
       - "kafka:/bitnami"
     environment:
