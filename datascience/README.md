@@ -14,7 +14,7 @@ postgres=# CREATE DATABASE dolphinscheduler;
 postgres=# CREATE ROLE root WITH CREATEDB CREATEROLE LOGIN SUPERUSER PASSWORD 'root';
 $ docker run datascience-dolphinscheduler-schema-initializer-1
 $ docker rm datascience-dolphinscheduler-schema-initializer-1
-$ docker compose start # 启动 dolphinscheduler
+$ docker compose start # start dolphinscheduler
 ```
 ### airflow
 ```shell
@@ -54,9 +54,7 @@ PASSWORD dolphinscheduler123
 
 ## Airflow
 ```shell
-URL http://{ip}:8208/
-
-# 创建用户
+# create user
 airflow users create --username admin --firstname admin --lastname admin --role Admin --email admin 
 ```
 
@@ -74,9 +72,13 @@ airflow users create --username admin --firstname admin --lastname admin --role 
 - [Prometheus](http://datascience:8290)
 - [Spark](http://datascience:8286)
 - [Zeeplin](http://datascience:8280)
+- [Jupyter Server](http://datascience:8285)
+    - `password: jupyter`
 
-## Export Ports
+## Ports
 ```shell
+# development ssh
+datascience:2025
 # hadoop
 datascience:8020
 # kafka

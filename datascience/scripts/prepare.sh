@@ -13,3 +13,4 @@ mkdir -p /data/docker/datascience/data/dolphinscheduler-logs
 mkdir -p /data/docker/datascience/data/dolphinscheduler-shared-local
 mkdir -p /data/docker/datascience/data/dolphinscheduler-resource-local
 mkdir -p /data/docker/datascience/data/hadoop
+mkdir -p /data/docker/datascience/data/jupyter/notebooks

@@ -155,7 +155,7 @@ services:
       - default
     volumes:
       - hadoop:/data
-  development-node:
+  development:
     image: sunzhenkai/development:0.0.3
     command: ["/sbin/init"]
     restart: always
