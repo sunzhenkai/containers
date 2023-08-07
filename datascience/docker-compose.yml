@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 networks:
   default:
     driver: bridge
@@ -531,12 +531,13 @@ services:
   azkaban-executor-server:
     image: sunzhenkai/azkaban-executor-server:839965af353368824435254f1b23b00e9937c24a
     restart: always
+    hostname: 7dff94102c1c
     environment:
       AZKABAN_MYSQL_HOST: mariadb
     networks:
       - default
     depends_on:
-      - mariadb:
+      mariadb:
         condition: service_healthy
   azkaban-web-server:
     image: sunzhenkai/azkaban-web-server:839965af353368824435254f1b23b00e9937c24a
