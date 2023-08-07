@@ -542,6 +542,8 @@ services:
       AZKABAN_MYSQL_HOST: mariadb
     networks:
       - default
+    ports:
+      - 8261:8081
     depends_on:
       azkaban-executor-server:
         condition: service_healthy
