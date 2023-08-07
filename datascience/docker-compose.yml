@@ -535,6 +535,9 @@ services:
       AZKABAN_MYSQL_HOST: mariadb
     networks:
       - default
+    depends_on:
+      - mariadb:
+        condition: service_healthy
   azkaban-web-server:
     image: sunzhenkai/azkaban-web-server:839965af353368824435254f1b23b00e9937c24a
     restart: always
@@ -546,4 +549,6 @@ services:
       - 8261:8081
     depends_on:
       azkaban-executor-server:
+        condition: service_healthy
+      mariadb:
         condition: service_healthy
