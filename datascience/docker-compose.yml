@@ -103,6 +103,12 @@ volumes:
       o: bind
       type: none
       device: /data/docker/datascience/data/flink
+  portainer:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /data/docker/datascience/data/portainer
 services:
   hadoop-namenode:
     image: apache/hadoop:3
@@ -553,3 +559,15 @@ services:
         condition: service_healthy
       mariadb:
         condition: service_healthy
+  portainer:
+    image: portainer/portainer-ce
+    restart: always
+    networks:
+      - default
+    ports:
+      - 8262:8000
+      - 8263:9000
+      - 8264:9443
+    volumes:
+      - portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock

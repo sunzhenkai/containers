@@ -67,13 +67,15 @@ airflow users create --username admin --firstname admin --lastname admin --role 
 - [Dolphinscheduler](http://datascience:12345/dolphinscheduler/ui)
 - [Flink JobManager](http://datascience:8220)
 - [Grafana](http://datascience:3000)
+- [Jupyter Server](http://datascience:8285)
+    - `password: jupyter`
 - [PhpMyAdmin](http://datascience:8283)
     - `username: root, password: <empty>`
+- [Portainer](http://datecience:8263)
 - [Prometheus](http://datascience:8290)
 - [Spark](http://datascience:8286)
 - [Zeeplin](http://datascience:8280)
-- [Jupyter Server](http://datascience:8285)
-    - `password: jupyter`
+
 
 ## Ports
 ```shell

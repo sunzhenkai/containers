@@ -1,4 +1,4 @@
-prapare:
+prepare:
 	@bash scripts/prepare.sh
 
 clean:
