@@ -15,3 +15,7 @@ mkdir -p /data/docker/datascience/data/dolphinscheduler-resource-local
 mkdir -p /data/docker/datascience/data/hadoop
 mkdir -p /data/docker/datascience/data/jupyter/notebooks
 mkdir -p /data/docker/datascience/data/portainer
+mkdir -p /data/docker/datascience/data/gitlab/config
+mkdir -p /data/docker/datascience/data/gitlab/log
+mkdir -p /data/docker/datascience/data/gitlab/data
+mkdir -p /data/docker/datascience/data/gitlab/runner

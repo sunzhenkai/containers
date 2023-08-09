@@ -109,6 +109,30 @@ volumes:
       o: bind
       type: none
       device: /data/docker/datascience/data/portainer
+  gitlab-config:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /data/docker/datascience/data/gitlab/config
+  gitlab-log:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /data/docker/datascience/data/gitlab/log
+  gitlab-data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /data/docker/datascience/data/gitlab/data
+  gitlab-runner:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /data/docker/datascience/data/gitlab/runner
 services:
   hadoop-namenode:
     image: apache/hadoop:3
@@ -571,3 +595,32 @@ services:
     volumes:
       - portainer:/data
       - /var/run/docker.sock:/var/run/docker.sock
+  gitlab-web:
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+    hostname: 'datascience'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://datascience:8929'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2224
+        # Add any other gitlab.rb configuration here, each on its own line
+    ports:
+      - '8929:8929'
+      - '2224:22'
+    volumes:
+      - 'gitlab-config:/etc/gitlab'
+      - 'gitlab-log:/var/log/gitlab'
+      - 'gitlab-data:/var/opt/gitlab'
+    shm_size: '256m'
+    networks:
+      - default
+  gitlab-runner:
+    image: gitlab/gitlab-runner:alpine
+    restart: always
+    depends_on:
+      - gitlab-web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - 'gitlab-runner:/etc/gitlab-runner'
+    networks:
+      - default

@@ -23,6 +23,14 @@ $ psql -U postgres
 postgres=# CREATE DATABASE bitnami_airflow;
 postgres=# CREATE ROLE bn_airflow WITH CREATEDB CREATEROLE LOGIN SUPERUSER PASSWORD 'bitnami1';
 ```
+
+### gitlab
+```shell
+USERNAME root
+PASSWORD <random>
+# Get Password Command: 
+# docker exec -it datascience-gitlab-web-1 grep 'Password:' /etc/gitlab/initial_root_password
+```
 ## Commands
 ```shell
 # Install
@@ -66,12 +74,13 @@ airflow users create --username admin --firstname admin --lastname admin --role 
 - [Consul](http://datascience:8500)
 - [Dolphinscheduler](http://datascience:12345/dolphinscheduler/ui)
 - [Flink JobManager](http://datascience:8220)
+- [Gitlab](http://datascience:8929)
 - [Grafana](http://datascience:3000)
 - [Jupyter Server](http://datascience:8285)
     - `password: jupyter`
 - [PhpMyAdmin](http://datascience:8283)
     - `username: root, password: <empty>`
-- [Portainer](http://datecience:8263)
+- [Portainer](http://datascience:8263)
 - [Prometheus](http://datascience:8290)
 - [Spark](http://datascience:8286)
 - [Zeeplin](http://datascience:8280)
@@ -85,6 +94,8 @@ datascience:2025
 datascience:8020
 # kafka
 datascience:9092
+# gitlab ssh port
+datascience:2224
 # mariadb
 datascience:3306
 # mongodb
