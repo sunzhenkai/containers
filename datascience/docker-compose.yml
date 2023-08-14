@@ -139,6 +139,7 @@ services:
     hostname: namenode
     command: ["hdfs", "namenode"]
     restart: always
+    container_name: hadoop-namenode
     ports:
       - 9870:9870
       - 8020:8020
@@ -187,6 +188,7 @@ services:
       - hadoop:/data
   development:
     image: sunzhenkai/development:0.0.3
+    container_name: dev
     command: ["/sbin/init"]
     restart: always
     privileged: true
