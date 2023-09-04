@@ -188,7 +188,8 @@ services:
       - hadoop:/data
   development:
     image: sunzhenkai/development:0.0.3
-    container_name: dev
+    container_name: datascience-dev
+    hostname: datascience-dev
     command: ["/sbin/init"]
     restart: always
     privileged: true
@@ -201,6 +202,8 @@ services:
       - data:/data
   spark:
     image: docker.io/bitnami/spark:3.4
+    container_name: datascience-spark
+    hostname: datascience-spark
     environment:
       - SPARK_MODE=master
       - SPARK_RPC_AUTHENTICATION_ENABLED=no
@@ -230,8 +233,10 @@ services:
     deploy:
       mode: replicated
       replicas: 2
-  zeeplin:
+  zeppelin:
     image: apache/zeppelin:0.10.1
+    container_name: datascience-zeppelin
+    hostname: datascience-zeppelin
     environment:
       - ZEPPELIN_LOG_DIR='/data/zeeplin/logs'
       - ZEPPELIN_NOTEBOOK_DIR='/data/zeeplin/notebook'
@@ -243,6 +248,8 @@ services:
       - data:/data
   flink-jobmanager:
     image: docker.io/bitnami/flink:1
+    container_name: datascience-flink
+    hostname: datascience-flink
     ports:
       - 8223:6123
       - 8220:8081
@@ -284,20 +291,9 @@ services:
       - ./config/flink/logback.xml:/bitnami/flink/conf/logback.xml
       - ./config/flink/workers:/bitnami/flink/conf/workers
       - ./config/flink/zoo.cfg:/bitnami/flink/conf/zoo.cfg
-  # flink-taskmanager-b:
-  #   image: docker.io/bitnami/flink:1
-  #   ports:
-  #     - 8225:6121
-  #     - 8226:6122
-  #   environment:
-  #     - FLINK_MODE=taskmanager
-  #     - FLINK_JOB_MANAGER_RPC_ADDRESS=flink-jobmanager
-  #   networks:
-  #     - default
-  #   volumes:
-  #     - ./config/flink/master:/bitnami/flink/conf/master
-  #     - ./config/flink/flink-conf.yaml:/bitnami/flink/conf/flink-conf.yaml
   kafka:
+    container_name: datascience-kafka
+    hostname: datascience-kafka
     image: docker.io/bitnami/kafka:3.5
     ports:
       - 9092:9092
@@ -318,9 +314,12 @@ services:
       - default
   consul:
     image: docker.io/bitnami/consul:1
+    container_name: datascience-consul
+    hostname: datascience-consul
     user: root
     volumes:
       - consul:/bitnami/consul
+      - ./config/consul/standalone:/opt/bitnami/consul/consul.json
     ports:
       - '8300:8300'
       - '8301:8301'
@@ -362,6 +361,8 @@ services:
       - default
   redis:
     image: docker.io/bitnami/redis:7.0
+    container_name: datascience-redis
+    hostname: datascience-redis
     volumes:
       - 'redis:/bitnami'
     environment:
@@ -413,6 +414,8 @@ services:
       - default
   mongodb:
     image: docker.io/bitnami/mongodb:6.0
+    container_name: datascience-mongodb
+    hostname: datascience-mongodb
     ports:
       - "27017:27017"
     volumes:
@@ -421,6 +424,8 @@ services:
       - default
   mariadb:
     image: docker.io/bitnami/mariadb:10.9.7
+    container_name: datascience-mariadb
+    hostname: datascience-mariadb
     ports:
       - '3306:3306'
     volumes:
@@ -437,6 +442,8 @@ services:
       - default
   phpmyadmin:
     image: docker.io/bitnami/phpmyadmin:5
+    container_name: datascience-phpmyadmin
+    hostname: datascience-phpmyadmin
     ports:
       - '8283:8080'
       - '8243:8443'
@@ -446,6 +453,8 @@ services:
       - default
   grafana:
     image: docker.io/bitnami/grafana:10
+    container_name: datascience-grafana
+    hostname: datascience-grafana
     ports:
       - '3000:3000'
     environment:
@@ -456,6 +465,8 @@ services:
       - default
   zookeeper:
     image: docker.io/bitnami/zookeeper:3.8
+    container_name: datascience-zookeeper
+    hostname: datascience-zookeeper
     user: root
     ports:
       - '2181:2181'
@@ -526,6 +537,8 @@ services:
       - default
   dolphinscheduler-master:
     image: apache/dolphinscheduler-master:latest
+    container_name: datascience-dolphinscheduler
+    hostname: datascience-dolphinscheduler
     env_file:
       - ./config/dolphinscheduler/env
     healthcheck:
@@ -573,6 +586,8 @@ services:
         condition: service_healthy
   azkaban-web-server:
     image: sunzhenkai/azkaban-web-server:839965af353368824435254f1b23b00e9937c24a
+    container_name: datascience-azkaban
+    hostname: datascience-azkaban
     restart: always
     environment:
       AZKABAN_MYSQL_HOST: mariadb
@@ -600,7 +615,8 @@ services:
   gitlab-web:
     image: 'gitlab/gitlab-ce:latest'
     restart: always
-    hostname: 'datascience'
+    container_name: datascience-lab
+    hostname: datascience-gitlab
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'http://datascience:8929'
@@ -629,6 +645,8 @@ services:
   # scylladb data path: /var/lib/scylla
   scylladb-meta:
     image: scylladb/scylla:5.2.6
+    container_name: datascience-scylladb
+    hostname: datascience-scylladb
     restart: always
     command: --seeds=scylla-meta --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
     networks:
