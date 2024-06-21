@@ -200,6 +200,28 @@ services:
       - 8285:8085
     volumes:
       - data:/data
+  development-gpu:
+    image: sunzhenkai/development:0.0.3
+    profiles: [gpu]
+    container_name: datascience-dev-gpu
+    hostname: datascience-dev-gpu
+    command: ["/sbin/init"]
+    restart: always
+    privileged: true
+    networks:
+      - default
+    ports:
+      - 2026:22
+      - 8288:8085
+    volumes:
+      - data:/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
   spark:
     image: docker.io/bitnami/spark:3.4
     container_name: datascience-spark
