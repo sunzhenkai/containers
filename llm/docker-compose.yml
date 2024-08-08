@@ -1,0 +1,58 @@
+version: "3"
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "127.60.0.0/24"
+          gateway: "127.60.0.1"
+volumes:
+  ollama:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /data/docker/llm/data/ollama
+  open_webui:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /data/docker/llm/data/open_webui
+services:
+  ollama:
+    image: ollama/ollama:latest
+    restart: always
+    hostname: ollama
+    user: root
+    ports:
+      - '11434:11434'
+    volumes:
+      - ollama:/root/.ollama
+    networks:
+      - default
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  open_webui:
+    image: ghcr.io/open-webui/open-webui:main
+    restart: always
+    hostname: open_webui
+    user: root
+    ports:
+      - '9020:8080'
+    volumes:
+      - open_webui:/app/backend/data
+    networks:
+      - default
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
