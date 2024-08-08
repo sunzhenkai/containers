@@ -38,10 +38,3 @@ services:
       - default
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
