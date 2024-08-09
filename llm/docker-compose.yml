@@ -48,4 +48,5 @@ services:
     networks:
       - default
     environment:
-      - SENIVERSE_API_SECRET_KEY=YOUR_API_SK
+      - SENIVERSE_API_SECRET_KEY=$SENIVERSE_API_SECRET_KEY # from .env
+      - OLLAMA_SERVER_URL=http://ollama:11434
