@@ -38,3 +38,14 @@ services:
       - default
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
+  llmground:
+    image: sunzhenkai/llmground:0.0.1
+    restart: always
+    hostname: llmground
+    user: root
+    ports:
+      - '9015:9015'
+    networks:
+      - default
+    environment:
+      - SENIVERSE_API_SECRET_KEY=YOUR_API_SK
