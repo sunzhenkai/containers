@@ -12,7 +12,7 @@ services:
     hostname: caddy
     user: root
     ports:
-      - '3080:80'
+      - '3080:85'
       - '3443:443'
     volumes:
       - /data/docker/server/caddy/data:/data
