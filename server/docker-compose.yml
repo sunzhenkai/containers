@@ -1,0 +1,32 @@
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.60.1.0/24"
+          gateway: "172.60.1.1"
+services:
+  caddy:
+    image: caddy
+    restart: always
+    hostname: caddy
+    user: root
+    ports:
+      - '3080:80'
+      - '3443:443'
+    volumes:
+      - /data/docker/server/caddy/data:/data
+      - /data/docker/server/caddy/config:/config
+      - /data/docker/server/caddy/Caddyfile:/etc/caddy/Caddyfile
+    networks:
+      - default
+  registry:
+    image: registry:latest
+    restart: always
+    hostname: registry
+    user: root
+    ports:
+      - '5000:5000'
+    networks:
+      - default
+
