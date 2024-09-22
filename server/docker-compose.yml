@@ -29,4 +29,14 @@ services:
       - '5000:5000'
     networks:
       - default
+  samba:
+    image: 192.168.6.7:5000/dockurr/samba:latest
+    container_name: samba
+    environment:
+      USER: "admin"
+      PASS: "admin"
+    ports:
+      - 445:445
+    volumes:
+      - /downloads:/storage
 
