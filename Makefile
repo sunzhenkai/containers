@@ -1,2 +1,2 @@
 run:
-	@bash $(app)/run.sh $(op)
+	@bash run/$(app)/run.sh $(op)
