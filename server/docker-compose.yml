@@ -35,6 +35,7 @@ services:
     environment:
       USER: "admin"
       PASS: "admin"
+      CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.maximum-am-resource-percent: '0.1'
     ports:
       - 445:445
     volumes:

@@ -134,7 +134,7 @@ volumes:
       device: /data/docker/datascience/data/gitlab/runner
 services:
   hadoop-namenode:
-    image: apache/hadoop:3
+    image: apache/hadoop:3.3.6
     hostname: namenode
     command: ["hdfs", "namenode"]
     restart: always
@@ -144,43 +144,67 @@ services:
       - 8020:8020
       - 8020:8020/udp
     env_file:
-      - ./config/hadoop/config
+      - ./config/hadoop/hadoop.env
     volumes:
       - hadoop:/data
       # - ./hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
     environment:
       ENSURE_NAMENODE_DIR: "/data/dfs/name"
+      CLUSTER_NAME: prod
     networks:
       - default
   hadoop-datanode:
-    image: apache/hadoop:3
+    image: apache/hadoop:3.3.6
     command: ["hdfs", "datanode"]
     restart: always
     env_file:
-      - ./config/hadoop/config
+      - ./config/hadoop/hadoop.env
     networks:
       - default
     volumes:
       - hadoop:/data
   hadoop-resourcemanager:
-    image: apache/hadoop:3
+    image: apache/hadoop:3.3.6
     hostname: resourcemanager
     command: ["yarn", "resourcemanager"]
     restart: always
+    depends_on:
+      - hadoop-namenode
+      - hadoop-datanode
     ports:
       - 8088:8088
     env_file:
-      - ./config/hadoop/config
+      - ./config/hadoop/hadoop.env
     networks:
       - default
     volumes:
       - hadoop:/data
   hadoop-nodemanager:
-    image: apache/hadoop:3
+    image: apache/hadoop:3.3.6
     command: ["yarn", "nodemanager"]
     restart: always
+    depends_on:
+      - hadoop-namenode
+      - hadoop-datanode
+      - hadoop-resourcemanager
     env_file:
-      - ./config/hadoop/config
+      - ./config/hadoop/hadoop.env
+    networks:
+      - default
+    volumes:
+      - hadoop:/data
+  hadoop-historyserver:
+    image: apache/hadoop:3.3.6
+    command: ["yarn", "historyserver"]
+    restart: always
+    hostname: historyserver
+    env_file:
+      - ./config/hadoop/hadoop.env
+    depends_on:
+      - hadoop-namenode
+      - hadoop-datanode
+      - hadoop-resourcemanager
+      - hadoop-nodemanager
     networks:
       - default
     volumes:
