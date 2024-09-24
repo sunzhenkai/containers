@@ -278,6 +278,8 @@ services:
     deploy:
       mode: replicated
       replicas: 2
+    depends_on:
+      - spark
   zeppelin:
     image: apache/zeppelin:0.10.1
     container_name: datascience-zeppelin
@@ -363,7 +365,7 @@ services:
     hostname: datascience-consul
     user: root
     volumes:
-      - consul:/bitnami/consul
+      #- consul:/bitnami/consul
       - ./config/consul/standalone:/opt/bitnami/consul/consul.json
     ports:
       - '8300:8300'
@@ -646,7 +648,7 @@ services:
       mariadb:
         condition: service_healthy
   portainer:
-    image: portainer/portainer-ce
+    image: portainer/portainer-ce:2.21.2
     restart: always
     networks:
       - default
