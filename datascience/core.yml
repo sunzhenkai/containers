@@ -368,12 +368,12 @@ services:
       #- consul:/bitnami/consul
       - ./config/consul/standalone:/opt/bitnami/consul/consul.json
     ports:
-      - '8300:8300'
-      - '8301:8301'
-      - '8301:8301/udp'
-      - '8500:8500'
-      - '8600:8600'
-      - '8600:8600/udp'
+      - "8300:8300"
+      - "8301:8301"
+      - "8301:8301/udp"
+      - "8500:8500"
+      - "8600:8600"
+      - "8600:8600/udp"
     environment:
       - CONSUL_DISABLE_KEYRING_FILE=true
       - CONSUL_BIND_ADDR=127.0.0.1
@@ -384,7 +384,7 @@ services:
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - '8233:8123'
+      - "8233:8123"
     volumes:
       - clickhouse:/bitnami/clickhouse
     networks:
@@ -393,12 +393,12 @@ services:
     user: root
     image: docker.io/bitnami/postgresql:15
     volumes:
-      - 'postgresql:/bitnami/postgresql'
+      - "postgresql:/bitnami/postgresql"
     environment:
       # ALLOW_EMPTY_PASSWORD is recommended only for development.
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - '5432:5432'
+      - "5432:5432"
     healthcheck:
       test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/5432"]
       interval: 5s
@@ -411,12 +411,12 @@ services:
     container_name: datascience-redis
     hostname: datascience-redis
     volumes:
-      - 'redis:/bitnami'
+      - "redis:/bitnami"
     environment:
       # ALLOW_EMPTY_PASSWORD is recommended only for development.
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
-      - '6379:6379'
+      - "6379:6379"
     networks:
       - datascience
   airflow-scheduler:
@@ -450,13 +450,13 @@ services:
       - AIRFLOW_USERNAME=user
       - AIRFLOW_EMAIL=user@example.com
     ports:
-      - '8208:8080'
+      - "8208:8080"
     networks:
       - datascience
   prometheus:
     image: docker.io/bitnami/prometheus:2
     ports:
-      - '8290:9090'
+      - "8290:9090"
     networks:
       - datascience
   mongodb:
@@ -466,7 +466,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - 'mongodb:/bitnami/mongodb'
+      - "mongodb:/bitnami/mongodb"
     networks:
       - datascience
   mariadb:
@@ -474,14 +474,14 @@ services:
     container_name: datascience-mariadb
     hostname: datascience-mariadb
     ports:
-      - '3306:3306'
+      - "3306:3306"
     volumes:
-      - 'mariadb:/bitnami/mariadb'
+      - "mariadb:/bitnami/mariadb"
     environment:
       # ALLOW_EMPTY_PASSWORD is recommended only for development.
       - ALLOW_EMPTY_PASSWORD=yes
     healthcheck:
-      test: ['CMD', '/opt/bitnami/scripts/mariadb/healthcheck.sh']
+      test: ["CMD", "/opt/bitnami/scripts/mariadb/healthcheck.sh"]
       interval: 15s
       timeout: 5s
       retries: 6
@@ -492,8 +492,8 @@ services:
     container_name: datascience-phpmyadmin
     hostname: datascience-phpmyadmin
     ports:
-      - '8283:8080'
-      - '8243:8443'
+      - "8283:8080"
+      - "8243:8443"
     depends_on:
       - mariadb
     networks:
@@ -503,9 +503,9 @@ services:
     container_name: datascience-grafana
     hostname: datascience-grafana
     ports:
-      - '3000:3000'
+      - "3000:3000"
     environment:
-      - 'GF_SECURITY_ADMIN_PASSWORD=bitnami'
+      - "GF_SECURITY_ADMIN_PASSWORD=bitnami"
     volumes:
       - grafana:/opt/bitnami/grafana/data
     networks:
@@ -516,9 +516,9 @@ services:
     hostname: datascience-zookeeper
     user: root
     ports:
-      - '2181:2181'
+      - "2181:2181"
     volumes:
-      - 'zookeeper:/bitnami/zookeeper'
+      - "zookeeper:/bitnami/zookeeper"
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     networks:
@@ -528,12 +528,12 @@ services:
       interval: 5s
       timeout: 60s
       retries: 120
-      
+
   # dolphinscheduler
   dolphinscheduler-schema-initializer:
     image: apache/dolphinscheduler-tools:latest
     profiles: ["init"]
-    command: [ tools/bin/upgrade-schema.sh ]
+    command: [tools/bin/upgrade-schema.sh]
     env_file:
       - ./config/dolphinscheduler/env
     depends_on:
@@ -553,7 +553,12 @@ services:
       - "12345:12345"
       - "25333:25333"
     healthcheck:
-      test: [ "CMD", "curl", "http://localhost:12345/dolphinscheduler/actuator/health" ]
+      test:
+        [
+          "CMD",
+          "curl",
+          "http://localhost:12345/dolphinscheduler/actuator/health",
+        ]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -571,7 +576,7 @@ services:
     env_file:
       - ./config/dolphinscheduler/env
     healthcheck:
-      test: [ "CMD", "curl", "http://localhost:50053/actuator/health" ]
+      test: ["CMD", "curl", "http://localhost:50053/actuator/health"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -589,7 +594,7 @@ services:
     env_file:
       - ./config/dolphinscheduler/env
     healthcheck:
-      test: [ "CMD", "curl", "http://localhost:5679/actuator/health" ]
+      test: ["CMD", "curl", "http://localhost:5679/actuator/health"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -606,7 +611,7 @@ services:
     env_file:
       - ./config/dolphinscheduler/env
     healthcheck:
-      test: [ "CMD", "curl", "http://localhost:1235/actuator/health" ]
+      test: ["CMD", "curl", "http://localhost:1235/actuator/health"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -660,7 +665,7 @@ services:
   #     - portainer:/data
   #     - /var/run/docker.sock:/var/run/docker.sock
   gitlab-web:
-    image: 'gitlab/gitlab-ce:latest'
+    image: "gitlab/gitlab-ce:latest"
     restart: always
     container_name: datascience-lab
     hostname: datascience-gitlab
@@ -670,13 +675,13 @@ services:
         gitlab_rails['gitlab_shell_ssh_port'] = 2224
         # Add any other gitlab.rb configuration here, each on its own line
     ports:
-      - '8929:8929'
-      - '2224:22'
+      - "8929:8929"
+      - "2224:22"
     volumes:
-      - 'gitlab-config:/etc/gitlab'
-      - 'gitlab-log:/var/log/gitlab'
-      - 'gitlab-data:/var/opt/gitlab'
-    shm_size: '256m'
+      - "gitlab-config:/etc/gitlab"
+      - "gitlab-log:/var/log/gitlab"
+      - "gitlab-data:/var/opt/gitlab"
+    shm_size: "256m"
     networks:
       - datascience
   gitlab-runner:
@@ -686,7 +691,7 @@ services:
       - gitlab-web
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - 'gitlab-runner:/etc/gitlab-runner'
+      - "gitlab-runner:/etc/gitlab-runner"
     networks:
       - datascience
   # scylladb data path: /var/lib/scylla
@@ -699,11 +704,11 @@ services:
     networks:
       - datascience
     ports:
-      - '7000:7000'
-      - '7001:7001'
-      - '9042:9042'
-      - '9160:9160'
-      - '10000:10000'
+      - "7000:7000"
+      - "7001:7001"
+      - "9042:9042"
+      - "9160:9160"
+      - "10000:10000"
   scylladb-node:
     image: scylladb/scylla:5.2.6
     restart: always

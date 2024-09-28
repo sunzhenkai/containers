@@ -1,6 +1,6 @@
 networks:
   datascience:
-    external: 
+    external:
       name: datascience
 volumes:
   portainer:
@@ -9,7 +9,7 @@ volumes:
       o: bind
       type: none
       device: /data/docker/datascience/data/portainer
- 
+
 services:
   portainer:
     image: portainer/portainer-ce:2.21.2
@@ -23,4 +23,3 @@ services:
     volumes:
       - portainer:/data
       - /var/run/docker.sock:/var/run/docker.sock
- 
