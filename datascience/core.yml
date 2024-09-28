@@ -1,6 +1,7 @@
 networks:
   datascience:
     driver: bridge
+    name: datascience
     ipam:
       config:
         - subnet: "172.50.0.0/24"
@@ -639,7 +640,7 @@ services:
   azkaban-web-server:
     image: sunzhenkai/azkaban-web-server:latest
     container_name: datascience-azkaban
-    hostname: azkaban-web
+    hostname: azkaban-web-server
     restart: always
     environment:
       AZKABAN_MYSQL_HOST: mariadb

@@ -1,7 +1,7 @@
 networks:
   datascience:
-    external:
-      name: datascience
+    external: true
+    name: datascience
 volumes:
   portainer:
     driver: local

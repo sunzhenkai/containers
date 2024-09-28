@@ -34,13 +34,13 @@ PASSWORD <random>
 ## Commands
 ```shell
 # Install
-docker compose up -d
+docker compose -f core.yml up -d
 # Stop
-docker compose stop
+docker compose -f core.yml stop
 # Start
-docker compose start
+docker compose -f core.yml start
 # Uninstall
-docker compose down
+docker compose -f core.yml down
 # Clear data
 make clean  # or bash scripts/clean.sh
 ```
