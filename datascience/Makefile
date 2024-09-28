@@ -1,11 +1,13 @@
+SHELL := /bin/bash
+
 prepare:
-	@bash scripts/prepare.sh
+	env ENV=$(env) bash scripts/prepare.sh
 
 clean:
-	@bash scripts/clean.sh
+	env ENV=$(ENV) bash scripts/clean.sh
 
 stop:
-	@bash scripts/run.sh stop
+	env ENV=$(env) bash scripts/run.sh stop
 
 start:
-	@bash scripts/run.sh start
+	env ENV=$(env) bash scripts/run.sh start

@@ -1,5 +1,5 @@
 networks:
-  default:
+  datascience:
     driver: bridge
     ipam:
       config:
@@ -102,12 +102,12 @@ volumes:
       o: bind
       type: none
       device: /data/docker/datascience/data/flink
-  portainer:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/portainer
+  # portainer:
+  #   driver: local
+  #   driver_opts:
+  #     o: bind
+  #     type: none
+  #     device: /data/docker/datascience/data/portainer
   gitlab-config:
     driver: local
     driver_opts:
@@ -152,7 +152,7 @@ services:
       ENSURE_NAMENODE_DIR: "/data/dfs/name"
       CLUSTER_NAME: prod
     networks:
-      - default
+      - datascience
   hadoop-datanode:
     image: apache/hadoop:3.3.6
     command: ["hdfs", "datanode"]
@@ -160,7 +160,7 @@ services:
     env_file:
       - ./config/hadoop/hadoop.env
     networks:
-      - default
+      - datascience
     volumes:
       - hadoop:/data
   hadoop-resourcemanager:
@@ -176,7 +176,7 @@ services:
     env_file:
       - ./config/hadoop/hadoop.env
     networks:
-      - default
+      - datascience
     volumes:
       - hadoop:/data
   hadoop-nodemanager:
@@ -190,7 +190,7 @@ services:
     env_file:
       - ./config/hadoop/hadoop.env
     networks:
-      - default
+      - datascience
     volumes:
       - hadoop:/data
   hadoop-historyserver:
@@ -206,7 +206,7 @@ services:
       - hadoop-resourcemanager
       - hadoop-nodemanager
     networks:
-      - default
+      - datascience
     volumes:
       - hadoop:/data
   development:
@@ -217,7 +217,7 @@ services:
     restart: always
     privileged: true
     networks:
-      - default
+      - datascience
     ports:
       - 2025:22
       - 8285:8085
@@ -232,7 +232,7 @@ services:
     restart: always
     privileged: true
     networks:
-      - default
+      - datascience
     ports:
       - 2026:22
       - 8288:8085
@@ -260,7 +260,7 @@ services:
       - 8286:8080
       - 8277:7077
     networks:
-      - default
+      - datascience
   spark-worker:
     image: docker.io/bitnami/spark:3.4
     environment:
@@ -274,7 +274,7 @@ services:
       - SPARK_SSL_ENABLED=no
       - SPARK_USER=spark
     networks:
-      - default
+      - datascience
     deploy:
       mode: replicated
       replicas: 2
@@ -290,7 +290,7 @@ services:
     ports:
       - 8280:8080
     networks:
-      - default
+      - datascience
     volumes:
       - data:/data
   flink-jobmanager:
@@ -304,7 +304,7 @@ services:
       - FLINK_MODE=jobmanager
       - FLINK_CFG_REST_BIND__ADDRESS=0.0.0.0
     networks:
-      - default
+      - datascience
     volumes:
       - ./config/flink/master:/bitnami/flink/conf/master
       - ./config/flink/flink-conf.yaml:/bitnami/flink/conf/flink-conf.yaml
@@ -326,7 +326,7 @@ services:
       - FLINK_MODE=taskmanager
       - FLINK_JOB_MANAGER_RPC_ADDRESS=flink-jobmanager
     networks:
-      - default
+      - datascience
     volumes:
       - ./config/flink/master:/bitnami/flink/conf/master
       - ./config/flink/flink-conf.yaml:/bitnami/flink/conf/flink-conf.yaml
@@ -358,7 +358,7 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
     networks:
-      - default
+      - datascience
   consul:
     image: docker.io/bitnami/consul:1
     container_name: datascience-consul
@@ -378,7 +378,7 @@ services:
       - CONSUL_DISABLE_KEYRING_FILE=true
       - CONSUL_BIND_ADDR=127.0.0.1
     networks:
-      - default
+      - datascience
   clickhouse:
     image: docker.io/bitnami/clickhouse:23
     environment:
@@ -388,7 +388,7 @@ services:
     volumes:
       - clickhouse:/bitnami/clickhouse
     networks:
-      - default
+      - datascience
   postgresql:
     user: root
     image: docker.io/bitnami/postgresql:15
@@ -405,7 +405,7 @@ services:
       timeout: 60s
       retries: 120
     networks:
-      - default
+      - datascience
   redis:
     image: docker.io/bitnami/redis:7.0
     container_name: datascience-redis
@@ -418,7 +418,7 @@ services:
     ports:
       - '6379:6379'
     networks:
-      - default
+      - datascience
   airflow-scheduler:
     image: docker.io/bitnami/airflow-scheduler:2
     environment:
@@ -428,7 +428,7 @@ services:
       - AIRFLOW_EXECUTOR=CeleryExecutor
       - AIRFLOW_WEBSERVER_HOST=airflow
     networks:
-      - default
+      - datascience
   airflow-worker:
     image: docker.io/bitnami/airflow-worker:2
     environment:
@@ -438,7 +438,7 @@ services:
       - AIRFLOW_EXECUTOR=CeleryExecutor
       - AIRFLOW_WEBSERVER_HOST=airflow
     networks:
-      - default
+      - datascience
   airflow:
     image: docker.io/bitnami/airflow:2
     environment:
@@ -452,13 +452,13 @@ services:
     ports:
       - '8208:8080'
     networks:
-      - default
+      - datascience
   prometheus:
     image: docker.io/bitnami/prometheus:2
     ports:
       - '8290:9090'
     networks:
-      - default
+      - datascience
   mongodb:
     image: docker.io/bitnami/mongodb:6.0
     container_name: datascience-mongodb
@@ -468,7 +468,7 @@ services:
     volumes:
       - 'mongodb:/bitnami/mongodb'
     networks:
-      - default
+      - datascience
   mariadb:
     image: docker.io/bitnami/mariadb:10.9.7
     container_name: datascience-mariadb
@@ -486,7 +486,7 @@ services:
       timeout: 5s
       retries: 6
     networks:
-      - default
+      - datascience
   phpmyadmin:
     image: docker.io/bitnami/phpmyadmin:5
     container_name: datascience-phpmyadmin
@@ -497,7 +497,7 @@ services:
     depends_on:
       - mariadb
     networks:
-      - default
+      - datascience
   grafana:
     image: docker.io/bitnami/grafana:10
     container_name: datascience-grafana
@@ -509,7 +509,7 @@ services:
     volumes:
       - grafana:/opt/bitnami/grafana/data
     networks:
-      - default
+      - datascience
   zookeeper:
     image: docker.io/bitnami/zookeeper:3.8
     container_name: datascience-zookeeper
@@ -522,7 +522,7 @@ services:
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     networks:
-      - default
+      - datascience
     healthcheck:
       test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/2181"]
       interval: 5s
@@ -544,7 +544,7 @@ services:
       - dolphinscheduler-shared-local:/opt/soft
       - dolphinscheduler-resource-local:/dolphinscheduler
     networks:
-      - default
+      - datascience
   dolphinscheduler-api:
     image: apache/dolphinscheduler-api:latest
     env_file:
@@ -565,7 +565,7 @@ services:
       - dolphinscheduler-shared-local:/opt/soft
       - dolphinscheduler-resource-local:/dolphinscheduler
     networks:
-      - default
+      - datascience
   dolphinscheduler-alert:
     image: apache/dolphinscheduler-alert-server:latest
     env_file:
@@ -581,7 +581,7 @@ services:
     volumes:
       - dolphinscheduler-logs:/opt/dolphinscheduler/logs
     networks:
-      - default
+      - datascience
   dolphinscheduler-master:
     image: apache/dolphinscheduler-master:latest
     container_name: datascience-dolphinscheduler
@@ -600,7 +600,7 @@ services:
       - dolphinscheduler-logs:/opt/dolphinscheduler/logs
       - dolphinscheduler-shared-local:/opt/soft
     networks:
-      - default
+      - datascience
   dolphinscheduler-worker:
     image: apache/dolphinscheduler-worker:latest
     env_file:
@@ -619,27 +619,27 @@ services:
       - dolphinscheduler-shared-local:/opt/soft
       - dolphinscheduler-resource-local:/dolphinscheduler
     networks:
-      - default
+      - datascience
   azkaban-executor-server:
-    image: sunzhenkai/azkaban-executor-server:839965af353368824435254f1b23b00e9937c24a
+    image: sunzhenkai/azkaban-executor-server:latest
     restart: always
-    hostname: 7dff94102c1c
+    hostname: azkaban-executor-server
     environment:
       AZKABAN_MYSQL_HOST: mariadb
     networks:
-      - default
+      - datascience
     depends_on:
       mariadb:
         condition: service_healthy
   azkaban-web-server:
-    image: sunzhenkai/azkaban-web-server:839965af353368824435254f1b23b00e9937c24a
+    image: sunzhenkai/azkaban-web-server:latest
     container_name: datascience-azkaban
-    hostname: datascience-azkaban
+    hostname: azkaban-web
     restart: always
     environment:
       AZKABAN_MYSQL_HOST: mariadb
     networks:
-      - default
+      - datascience
     ports:
       - 8261:8081
     depends_on:
@@ -647,18 +647,18 @@ services:
         condition: service_healthy
       mariadb:
         condition: service_healthy
-  portainer:
-    image: portainer/portainer-ce:2.21.2
-    restart: always
-    networks:
-      - default
-    ports:
-      - 8262:8000
-      - 8263:9000
-      - 8264:9443
-    volumes:
-      - portainer:/data
-      - /var/run/docker.sock:/var/run/docker.sock
+  # portainer:
+  #   image: portainer/portainer-ce:2.21.2
+  #   restart: always
+  #   networks:
+  #     - datascience
+  #   ports:
+  #     - 8262:8000
+  #     - 8263:9000
+  #     - 8264:9443
+  #   volumes:
+  #     - portainer:/data
+  #     - /var/run/docker.sock:/var/run/docker.sock
   gitlab-web:
     image: 'gitlab/gitlab-ce:latest'
     restart: always
@@ -678,7 +678,7 @@ services:
       - 'gitlab-data:/var/opt/gitlab'
     shm_size: '256m'
     networks:
-      - default
+      - datascience
   gitlab-runner:
     image: gitlab/gitlab-runner:alpine
     restart: always
@@ -688,7 +688,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - 'gitlab-runner:/etc/gitlab-runner'
     networks:
-      - default
+      - datascience
   # scylladb data path: /var/lib/scylla
   scylladb-meta:
     image: scylladb/scylla:5.2.6
@@ -697,7 +697,7 @@ services:
     restart: always
     command: --seeds=scylla-meta --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
     networks:
-      - default
+      - datascience
     ports:
       - '7000:7000'
       - '7001:7001'
@@ -709,7 +709,9 @@ services:
     restart: always
     command: --seeds=scylla-meta --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
     networks:
-      - default
+      - datascience
     deploy:
       mode: replicated
       replicas: 2
+    depends_on:
+      - scylladb-meta

@@ -1,0 +1,26 @@
+networks:
+  datascience:
+    external: 
+      name: datascience
+volumes:
+  portainer:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /data/docker/datascience/data/portainer
+ 
+services:
+  portainer:
+    image: portainer/portainer-ce:2.21.2
+    restart: always
+    networks:
+      - datascience
+    ports:
+      - 8262:8000
+      - 8263:9000
+      - 8264:9443
+    volumes:
+      - portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+ 
