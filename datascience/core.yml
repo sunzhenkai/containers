@@ -7,82 +7,6 @@ networks:
         - subnet: "172.50.0.0/24"
           gateway: "172.50.0.1"
 services:
-  hadoop-namenode:
-    image: apache/hadoop:3.3.6
-    hostname: namenode
-    command: ["hdfs", "namenode"]
-    restart: always
-    container_name: hadoop-namenode
-    ports:
-      - 9870:9870
-      - 8020:8020
-      - 8020:8020/udp
-    env_file:
-      - ./config/hadoop/hadoop.env
-    volumes:
-      - hadoop:/data
-      # - ./hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
-    environment:
-      ENSURE_NAMENODE_DIR: "/data/dfs/name"
-      CLUSTER_NAME: prod
-    networks:
-      - datascience
-  hadoop-datanode:
-    image: apache/hadoop:3.3.6
-    command: ["hdfs", "datanode"]
-    restart: always
-    env_file:
-      - ./config/hadoop/hadoop.env
-    networks:
-      - datascience
-    volumes:
-      - hadoop:/data
-  hadoop-resourcemanager:
-    image: apache/hadoop:3.3.6
-    hostname: resourcemanager
-    command: ["yarn", "resourcemanager"]
-    restart: always
-    depends_on:
-      - hadoop-namenode
-      - hadoop-datanode
-    ports:
-      - 8088:8088
-    env_file:
-      - ./config/hadoop/hadoop.env
-    networks:
-      - datascience
-    volumes:
-      - hadoop:/data
-  hadoop-nodemanager:
-    image: apache/hadoop:3.3.6
-    command: ["yarn", "nodemanager"]
-    restart: always
-    depends_on:
-      - hadoop-namenode
-      - hadoop-datanode
-      - hadoop-resourcemanager
-    env_file:
-      - ./config/hadoop/hadoop.env
-    networks:
-      - datascience
-    volumes:
-      - hadoop:/data
-  hadoop-historyserver:
-    image: apache/hadoop:3.3.6
-    command: ["yarn", "historyserver"]
-    restart: always
-    hostname: historyserver
-    env_file:
-      - ./config/hadoop/hadoop.env
-    depends_on:
-      - hadoop-namenode
-      - hadoop-datanode
-      - hadoop-resourcemanager
-      - hadoop-nodemanager
-    networks:
-      - datascience
-    volumes:
-      - hadoop:/data
   development:
     image: sunzhenkai/development:0.0.3
     container_name: datascience-dev
@@ -233,26 +157,6 @@ services:
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
     networks:
       - datascience
-  consul:
-    image: docker.io/bitnami/consul:1
-    container_name: datascience-consul
-    hostname: datascience-consul
-    user: root
-    volumes:
-      #- consul:/bitnami/consul
-      - ./config/consul/standalone:/opt/bitnami/consul/consul.json
-    ports:
-      - "8300:8300"
-      - "8301:8301"
-      - "8301:8301/udp"
-      - "8500:8500"
-      - "8600:8600"
-      - "8600:8600/udp"
-    environment:
-      - CONSUL_DISABLE_KEYRING_FILE=true
-      - CONSUL_BIND_ADDR=127.0.0.1
-    networks:
-      - datascience
   clickhouse:
     image: docker.io/bitnami/clickhouse:23
     environment:
@@ -343,24 +247,6 @@ services:
       - "mongodb:/bitnami/mongodb"
     networks:
       - datascience
-  mariadb:
-    image: docker.io/bitnami/mariadb:10.9.7
-    container_name: datascience-mariadb
-    hostname: datascience-mariadb
-    ports:
-      - "3306:3306"
-    volumes:
-      - "mariadb:/bitnami/mariadb"
-    environment:
-      # ALLOW_EMPTY_PASSWORD is recommended only for development.
-      - ALLOW_EMPTY_PASSWORD=yes
-    healthcheck:
-      test: ["CMD", "/opt/bitnami/scripts/mariadb/healthcheck.sh"]
-      interval: 15s
-      timeout: 5s
-      retries: 6
-    networks:
-      - datascience
   phpmyadmin:
     image: docker.io/bitnami/phpmyadmin:5
     container_name: datascience-phpmyadmin
@@ -402,41 +288,11 @@ services:
       interval: 5s
       timeout: 60s
       retries: 120
-  azkaban-executor-server:
-    image: sunzhenkai/azkaban-executor-server:latest
-    restart: always
-    hostname: azkaban-executor-server
-    environment:
-      AZKABAN_MYSQL_HOST: mariadb
-    networks:
-      - datascience
-    depends_on:
-      mariadb:
-        condition: service_healthy
-  azkaban-web-server:
-    image: sunzhenkai/azkaban-web-server:latest
-    container_name: datascience-azkaban
-    hostname: azkaban-web-server
-    restart: always
-    environment:
-      AZKABAN_MYSQL_HOST: mariadb
-    networks:
-      - datascience
-    ports:
-      - 8261:8081
-    depends_on:
-      azkaban-executor-server:
-        condition: service_healthy
-      mariadb:
-        condition: service_healthy
 
 volumes:
   data:
   kafka:
-  hadoop:
-  mariadb:
   clickhouse:
-  consul:
   zookeeper:
   postgresql:
   redis:

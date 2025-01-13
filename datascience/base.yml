@@ -16,6 +16,7 @@ x-hadoop-common-config:
     - ./config/hadoop/config
 
 services:
+  # hadoop
   namenode:
     <<: *hadoop-common-config
     hostname: namenode
@@ -36,6 +37,90 @@ services:
   nodemanager:
     <<: *hadoop-common-config
     command: ["yarn", "nodemanager"]
-
+  # azkaban
+  azkaban-executor-server:
+    image: sunzhenkai/azkaban-executor-server:latest
+    restart: always
+    hostname: azkaban-executor-server
+    environment:
+      AZKABAN_MYSQL_HOST: mariadb
+      AZKABAN_MYSQL_USERNAME: azkaban
+      AZKABAN_MYSQL_PASSWORD: azkaban
+    networks:
+      - datascience
+    depends_on:
+      mariadb:
+        condition: service_healthy
+  azkaban-web-server:
+    image: sunzhenkai/azkaban-web-server:latest
+    container_name: datascience-azkaban
+    hostname: azkaban-web-server
+    restart: always
+    environment:
+      AZKABAN_MYSQL_HOST: mariadb
+      AZKABAN_MYSQL_USERNAME: azkaban
+      AZKABAN_MYSQL_PASSWORD: azkaban
+    networks:
+      - datascience
+    ports:
+      - 8261:8081
+    depends_on:
+      azkaban-executor-server:
+        condition: service_healthy
+      mariadb:
+        condition: service_healthy
+  # consul
+  consul:
+    image: docker.io/bitnami/consul:1
+    container_name: datascience-consul
+    hostname: datascience-consul
+    user: root
+    volumes:
+      - consul:/bitnami/consul
+      - ./config/consul/standalone:/opt/bitnami/consul/consul.json
+    ports:
+      - "8300:8300"
+      - "8301:8301"
+      - "8301:8301/udp"
+      - "8500:8500"
+      - "8600:8600"
+      - "8600:8600/udp"
+    environment:
+      - CONSUL_DISABLE_KEYRING_FILE=true
+      - CONSUL_BIND_ADDR=127.0.0.1
+    networks:
+      - datascience
+  # database
+  mariadb:
+    image: docker.io/bitnami/mariadb:10.9.7
+    container_name: datascience-mariadb
+    hostname: datascience-mariadb
+    ports:
+      - "3306:3306"
+    volumes:
+      - "mariadb:/bitnami/mariadb"
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+    healthcheck:
+      test: ["CMD", "/opt/bitnami/scripts/mariadb/healthcheck.sh"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+    networks:
+      - datascience
+  phpmyadmin:
+    image: docker.io/bitnami/phpmyadmin:5
+    container_name: datascience-phpmyadmin
+    hostname: datascience-phpmyadmin
+    ports:
+      - "8283:8080"
+      - "8243:8443"
+    depends_on:
+      - mariadb
+    networks:
+      - datascience
 volumes:
   hadoop:
+  consul:
+  mariadb:
