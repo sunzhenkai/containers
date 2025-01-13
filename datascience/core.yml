@@ -6,79 +6,6 @@ networks:
       config:
         - subnet: "172.50.0.0/24"
           gateway: "172.50.0.1"
-volumes:
-  data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data
-  kafka:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/kafka
-  hadoop:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/hadoop
-  mariadb:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/mariadb
-  clickhouse:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/clickhouse
-  consul:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/consul
-  zookeeper:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/zookeeper
-  postgresql:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/postgresql
-  redis:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/redis
-  mongodb:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/mongodb
-  grafana:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/grafana
-  flink:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/flink
 services:
   hadoop-namenode:
     image: apache/hadoop:3.3.6
@@ -502,3 +429,17 @@ services:
         condition: service_healthy
       mariadb:
         condition: service_healthy
+
+volumes:
+  data:
+  kafka:
+  hadoop:
+  mariadb:
+  clickhouse:
+  consul:
+  zookeeper:
+  postgresql:
+  redis:
+  mongodb:
+  grafana:
+  flink:

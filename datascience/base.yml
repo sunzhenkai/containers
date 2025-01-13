@@ -1,0 +1,41 @@
+networks:
+  datascience:
+    driver: bridge
+    name: datascience
+    ipam:
+      config:
+        - subnet: "172.50.0.0/24"
+          gateway: "172.50.0.1"
+
+x-hadoop-common-config:
+  &hadoop-common-config
+  image: apache/hadoop:3.4.1
+  volumes:
+    - hadoop:/opt/hadoop
+  env_file:
+    - ./config/hadoop/config
+
+services:
+  namenode:
+    <<: *hadoop-common-config
+    hostname: namenode
+    command: ["hdfs", "namenode"]
+    ports:
+      - 9870:9870
+    environment:
+      ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
+  datanode:
+    <<: *hadoop-common-config
+    command: ["hdfs", "datanode"]
+  resourcemanager:
+    <<: *hadoop-common-config
+    hostname: resourcemanager
+    command: ["yarn", "resourcemanager"]
+    ports:
+      - 8088:8088
+  nodemanager:
+    <<: *hadoop-common-config
+    command: ["yarn", "nodemanager"]
+
+volumes:
+  hadoop:
