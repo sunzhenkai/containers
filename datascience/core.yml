@@ -73,66 +73,12 @@ volumes:
       o: bind
       type: none
       device: /data/docker/datascience/data/grafana
-  dolphinscheduler-worker-data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/dolphinscheduler-worker-data
-  dolphinscheduler-logs:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/dolphinscheduler-logs
-  dolphinscheduler-shared-local:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/dolphinscheduler-shared-local
-  dolphinscheduler-resource-local:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: /data/docker/datascience/data/dolphinscheduler-resource-local
   flink:
     driver: local
     driver_opts:
       o: bind
       type: none
       device: /data/docker/datascience/data/flink
-  # portainer:
-  #   driver: local
-  #   driver_opts:
-  #     o: bind
-  #     type: none
-  #     device: /data/docker/datascience/data/portainer
-  # gitlab-config:
-  #   driver: local
-  #   driver_opts:
-  #     o: bind
-  #     type: none
-  #     device: /data/docker/datascience/data/gitlab/config
-  # gitlab-log:
-  #   driver: local
-  #   driver_opts:
-  #     o: bind
-  #     type: none
-  #     device: /data/docker/datascience/data/gitlab/log
-  # gitlab-data:
-  #   driver: local
-  #   driver_opts:
-  #     o: bind
-  #     type: none
-  #     device: /data/docker/datascience/data/gitlab/data
-  # gitlab-runner:
-  #   driver: local
-  #   driver_opts:
-  #     o: bind
-  #     type: none
-  #     device: /data/docker/datascience/data/gitlab/runner
 services:
   hadoop-namenode:
     image: apache/hadoop:3.3.6
@@ -267,8 +213,8 @@ services:
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://spark:7077
-      - SPARK_WORKER_MEMORY=60G
-      - SPARK_WORKER_CORES=30
+      - SPARK_WORKER_MEMORY=30G
+      - SPARK_WORKER_CORES=15
       - SPARK_RPC_AUTHENTICATION_ENABLED=no
       - SPARK_RPC_ENCRYPTION_ENABLED=no
       - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
@@ -529,103 +475,6 @@ services:
       interval: 5s
       timeout: 60s
       retries: 120
-
-  # dolphinscheduler
-  dolphinscheduler-schema-initializer:
-    image: apache/dolphinscheduler-tools:latest
-    profiles: ["init"]
-    command: [tools/bin/upgrade-schema.sh]
-    env_file:
-      - ./config/dolphinscheduler/env
-    depends_on:
-      postgresql:
-        condition: service_healthy
-    volumes:
-      - dolphinscheduler-logs:/opt/dolphinscheduler/logs
-      - dolphinscheduler-shared-local:/opt/soft
-      - dolphinscheduler-resource-local:/dolphinscheduler
-    networks:
-      - datascience
-  dolphinscheduler-api:
-    image: apache/dolphinscheduler-api:latest
-    env_file:
-      - ./config/dolphinscheduler/env
-    ports:
-      - "12345:12345"
-      - "25333:25333"
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "http://localhost:12345/dolphinscheduler/actuator/health",
-        ]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    volumes:
-      - dolphinscheduler-logs:/opt/dolphinscheduler/logs
-      - dolphinscheduler-shared-local:/opt/soft
-      - dolphinscheduler-resource-local:/dolphinscheduler
-    networks:
-      - datascience
-  dolphinscheduler-alert:
-    image: apache/dolphinscheduler-alert-server:latest
-    env_file:
-      - ./config/dolphinscheduler/env
-    healthcheck:
-      test: ["CMD", "curl", "http://localhost:50053/actuator/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    volumes:
-      - dolphinscheduler-logs:/opt/dolphinscheduler/logs
-    networks:
-      - datascience
-  dolphinscheduler-master:
-    image: apache/dolphinscheduler-master:latest
-    container_name: datascience-dolphinscheduler
-    hostname: datascience-dolphinscheduler
-    env_file:
-      - ./config/dolphinscheduler/env
-    healthcheck:
-      test: ["CMD", "curl", "http://localhost:5679/actuator/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    volumes:
-      - dolphinscheduler-logs:/opt/dolphinscheduler/logs
-      - dolphinscheduler-shared-local:/opt/soft
-    networks:
-      - datascience
-  dolphinscheduler-worker:
-    image: apache/dolphinscheduler-worker:latest
-    env_file:
-      - ./config/dolphinscheduler/env
-    healthcheck:
-      test: ["CMD", "curl", "http://localhost:1235/actuator/health"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    volumes:
-      - dolphinscheduler-worker-data:/tmp/dolphinscheduler
-      - dolphinscheduler-logs:/opt/dolphinscheduler/logs
-      - dolphinscheduler-shared-local:/opt/soft
-      - dolphinscheduler-resource-local:/dolphinscheduler
-    networks:
-      - datascience
   azkaban-executor-server:
     image: sunzhenkai/azkaban-executor-server:latest
     restart: always
@@ -653,71 +502,3 @@ services:
         condition: service_healthy
       mariadb:
         condition: service_healthy
-  # portainer:
-  #   image: portainer/portainer-ce:2.21.2
-  #   restart: always
-  #   networks:
-  #     - datascience
-  #   ports:
-  #     - 8262:8000
-  #     - 8263:9000
-  #     - 8264:9443
-  #   volumes:
-  #     - portainer:/data
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  # gitlab-web:
-  #   image: "gitlab/gitlab-ce:latest"
-  #   restart: always
-  #   container_name: datascience-lab
-  #   hostname: datascience-gitlab
-  #   environment:
-  #     GITLAB_OMNIBUS_CONFIG: |
-  #       external_url 'http://datascience:8929'
-  #       gitlab_rails['gitlab_shell_ssh_port'] = 2224
-  #       # Add any other gitlab.rb configuration here, each on its own line
-  #   ports:
-  #     - "8929:8929"
-  #     - "2224:22"
-  #   volumes:
-  #     - "gitlab-config:/etc/gitlab"
-  #     - "gitlab-log:/var/log/gitlab"
-  #     - "gitlab-data:/var/opt/gitlab"
-  #   shm_size: "256m"
-  #   networks:
-  #     - datascience
-  # gitlab-runner:
-  #   image: gitlab/gitlab-runner:alpine
-  #   restart: always
-  #   depends_on:
-  #     - gitlab-web
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - "gitlab-runner:/etc/gitlab-runner"
-  #   networks:
-  #     - datascience
-  # scylladb data path: /var/lib/scylla
-  scylladb-meta:
-    image: scylladb/scylla:5.2.6
-    container_name: datascience-scylladb
-    hostname: datascience-scylladb
-    restart: always
-    command: --seeds=scylla-meta --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
-    networks:
-      - datascience
-    ports:
-      - "7000:7000"
-      - "7001:7001"
-      - "9042:9042"
-      - "9160:9160"
-      - "10000:10000"
-  scylladb-node:
-    image: scylladb/scylla:5.2.6
-    restart: always
-    command: --seeds=scylla-meta --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
-    networks:
-      - datascience
-    deploy:
-      mode: replicated
-      replicas: 2
-    depends_on:
-      - scylladb-meta
