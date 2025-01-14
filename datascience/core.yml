@@ -14,6 +14,22 @@ x-hadoop-common-config:
     - hadoop:/opt/hadoop
   env_file:
     - ./config/hadoop/config
+x-flink-jobmanager:
+  &flink-jobmanager-common-config
+  image: docker.io/bitnami/flink:1
+  networks:
+    - datascience
+  volumes:
+    - ./config/flink/master:/bitnami/flink/conf/master
+    - ./config/flink/flink-conf.yaml:/bitnami/flink/conf/flink-conf.yaml
+    - ./config/flink/log4j-console.properties:/bitnami/flink/conf/log4j-console.properties
+    - ./config/flink/log4j-session.properties:/bitnami/flink/conf/log4j-session.properties
+    - ./config/flink/log4j.properties:/bitnami/flink/conf/log4j.properties
+    - ./config/flink/logback-console.xml:/bitnami/flink/conf/logback-console.xml
+    - ./config/flink/logback-session.xml:/bitnami/flink/conf/logback-session.xml
+    - ./config/flink/logback.xml:/bitnami/flink/conf/logback.xml
+    - ./config/flink/workers:/bitnami/flink/conf/workers
+    - ./config/flink/zoo.cfg:/bitnami/flink/conf/zoo.cfg
 
 services:
   # hadoop
@@ -69,6 +85,94 @@ services:
         condition: service_healthy
       mariadb:
         condition: service_healthy
+  kafka:
+    container_name: datascience-kafka
+    hostname: datascience-kafka
+    image: docker.io/bitnami/kafka:3.5
+    ports:
+      - 9092:9092
+    volumes:
+      - "kafka:/bitnami"
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    networks:
+      - datascience
+  spark:
+    image: docker.io/bitnami/spark:3.4
+    container_name: datascience-spark
+    hostname: datascience-spark
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_USER=spark
+    ports:
+      - 8286:8080
+      - 8277:7077
+    networks:
+      - datascience
+  spark-worker:
+    image: docker.io/bitnami/spark:3.4
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://datascience-spark:7077
+      - SPARK_WORKER_MEMORY=30G
+      - SPARK_WORKER_CORES=15
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_USER=spark
+    networks:
+      - datascience
+    deploy:
+      mode: replicated
+      replicas: 2
+    depends_on:
+      - spark
+  zeppelin:
+    image: apache/zeppelin:0.10.1
+    container_name: datascience-zeppelin
+    hostname: datascience-zeppelin
+    environment:
+      - ZEPPELIN_LOG_DIR='/data/zeeplin/logs'
+      - ZEPPELIN_NOTEBOOK_DIR='/data/zeeplin/notebook'
+    ports:
+      - 8280:8080
+    networks:
+      - datascience
+    volumes:
+      - data:/data
+  flink-jobmanager:
+    <<: *flink-jobmanager-common-config
+    container_name: datascience-flink
+    hostname: datascience-flink
+    ports:
+      - 8223:6123
+      - 8220:8081
+    environment:
+      - FLINK_MODE=jobmanager
+      - FLINK_CFG_REST_BIND__ADDRESS=0.0.0.0
+  flink-taskmanager:
+    <<: *flink-jobmanager-common-config
+    user: root
+    ports:
+      - 8221:6121
+      - 8222:6122
+    environment:
+      - FLINK_MODE=taskmanager
+      - FLINK_JOB_MANAGER_RPC_ADDRESS=flink-jobmanager
   # consul
   consul:
     image: docker.io/bitnami/consul:1
@@ -109,6 +213,20 @@ services:
       retries: 6
     networks:
       - datascience
+  redis:
+    image: docker.io/bitnami/redis:7.0
+    container_name: datascience-redis
+    hostname: datascience-redis
+    volumes:
+      - "redis:/bitnami"
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    networks:
+      - datascience
+
   phpmyadmin:
     image: docker.io/bitnami/phpmyadmin:5
     container_name: datascience-phpmyadmin
@@ -121,6 +239,9 @@ services:
     networks:
       - datascience
 volumes:
+  data:
   hadoop:
   consul:
   mariadb:
+  redis:
+  kafka:
