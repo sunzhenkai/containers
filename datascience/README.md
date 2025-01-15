@@ -68,23 +68,25 @@ airflow users create --username admin --firstname admin --lastname admin --role 
 
 # Access Services
 ## UI
-- [Airflow](http://datascience:8208)
+core
 - [Azkaban](http://datascience:8261)
     - `username: azkaban, password: azkaban`
 - [Consul](http://datascience:8500)
-- [Dolphinscheduler](http://datascience:12345/dolphinscheduler/ui)
 - [Flink JobManager](http://datascience:8220)
-- [Gitlab](http://datascience:8929)
-- [Grafana](http://datascience:3000)
 - [Jupyter Server](http://datascience:8285)
     - `password: jupyter`
 - [PhpMyAdmin](http://datascience:8283)
     - `username: root, password: <empty>`
-- [Portainer](http://datascience:8263)
-- [Prometheus](http://datascience:8290)
 - [Spark](http://datascience:8286)
 - [Zeeplin](http://datascience:8280)
 
+plugins
+- [Airflow](http://datascience:8208)
+- [Prometheus](http://datascience:8290)
+- [Portainer](http://datascience:8263)
+- [Grafana](http://datascience:3000)
+- [Gitlab](http://datascience:8929)
+- [Dolphinscheduler](http://datascience:12345/dolphinscheduler/ui)
 
 ## Ports
 ```shell
@@ -108,6 +110,14 @@ datascience:8290
 datascience:6379
 # zookeeper
 datascience:2181
+```
+
+# Check
+## Hadoop
+```shell
+hdfs dfs -ls /
+hdfs dfs -mkdir /tmp
+hdfs dfs -put /path/to/file /tmp/
 ```
 
 # Reference
