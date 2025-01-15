@@ -120,6 +120,19 @@ hdfs dfs -mkdir /tmp
 hdfs dfs -put /path/to/file /tmp/
 ```
 
+## Spark
+Submit example job.
+```shell
+# copy binary
+docker cp datascience-spark:/opt/bitnami/spark /path/to/spark
+# submit job
+/path/to/spark/bin/spark-submit --master spark://127.0.0.1:7077 --class org.apache.spark.examples.SparkPi /path/to/spark/examples/jars/spark-examples_2.12-3.4.1.jar
+
+# 提交到 yarn
+export HADOOP_CONF_DIR=/path/to/hadoop/etc/hadoop
+/data/app/spark/bin/spark-submit --master yarn --class org.apache.spark.examples.SparkPi /data/app/spark/examples/jars/spark-examples_2.12-3.4.1.jar
+```
+
 # Reference
 ## Gen PEM file
 ```shell
