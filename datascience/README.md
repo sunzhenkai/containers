@@ -69,6 +69,7 @@ airflow users create --username admin --firstname admin --lastname admin --role 
 # Access Services
 ## UI
 core
+- [Hadoop Resource Manager](http://datascience:8088/cluster)
 - [Azkaban](http://datascience:8261)
     - `username: azkaban, password: azkaban`
 - [Consul](http://datascience:8500)
@@ -125,10 +126,10 @@ Submit example job.
 ```shell
 # copy binary
 docker cp datascience-spark:/opt/bitnami/spark /path/to/spark
-# submit job
+# submit job to spark cluster
 /path/to/spark/bin/spark-submit --master spark://127.0.0.1:7077 --class org.apache.spark.examples.SparkPi /path/to/spark/examples/jars/spark-examples_2.12-3.4.1.jar
 
-# 提交到 yarn
+# submit job to yarn
 export HADOOP_CONF_DIR=/path/to/hadoop/etc/hadoop
 /data/app/spark/bin/spark-submit --master yarn --class org.apache.spark.examples.SparkPi /data/app/spark/examples/jars/spark-examples_2.12-3.4.1.jar
 ```
