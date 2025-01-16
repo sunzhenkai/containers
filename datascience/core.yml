@@ -122,9 +122,9 @@ services:
     networks:
       - datascience
   spark:
-    image: docker.io/bitnami/spark:3.4
-    container_name: datascience-spark
+    image: docker.io/bitnami/spark:3.3.2
     hostname: datascience-spark
+    container_name: datascience-spark
     environment:
       - SPARK_MODE=master
       - SPARK_RPC_AUTHENTICATION_ENABLED=no
@@ -138,7 +138,7 @@ services:
     networks:
       - datascience
   spark-worker:
-    image: docker.io/bitnami/spark:3.4
+    image: docker.io/bitnami/spark:3.3.2
     environment:
       - SPARK_MODE=worker
       - SPARK_MASTER_URL=spark://datascience-spark:7077
@@ -260,6 +260,11 @@ services:
 volumes:
   data:
   hadoop:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /storage/hadoop
   consul:
   mariadb:
   redis:
