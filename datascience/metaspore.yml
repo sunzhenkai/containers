@@ -1,0 +1,19 @@
+networks:
+  datascience:
+    external: true
+    name: datascience
+
+services:
+  metaspore-jupyter:
+    image: registry.cn-hangzhou.aliyuncs.com/oo2r/metaspore-training-jupyter:v1.0.0
+    restart: always
+    hostname: metaspore-jupyter
+    volumes:
+      - data:/data
+    ports:
+      - 8588:8888
+    networks:
+      - datascience
+
+volumes:
+  data:
