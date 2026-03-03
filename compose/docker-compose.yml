@@ -1,0 +1,10 @@
+services:
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - containers-network
+
+networks:
+  containers-network:
+    driver: bridge
