@@ -81,7 +81,7 @@ services:
     image: redis:7-alpine
     container_name: common-redis
     restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD:-redis123} --appendonly yes
+    command: redis-server --appendonly yes
     environment:
       TZ: Asia/Shanghai
     ports:
@@ -92,7 +92,7 @@ services:
     networks:
       - common-network
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis123}", "ping"]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5

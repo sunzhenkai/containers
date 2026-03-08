@@ -77,7 +77,6 @@ MONGO_DATABASE=app
 MONGO_PORT=27017
 
 # Redis 配置
-REDIS_PASSWORD=redis123
 REDIS_PORT=6379
 ```
 
@@ -118,9 +117,9 @@ mongosh "mongodb://admin:admin123@<服务器IP>:27017"
 ### Redis
 
 ```bash
-redis-cli -h <服务器IP> -p 6379 -a redis123
+redis-cli -h <服务器IP> -p 6379
 # 或在应用程序中配置
-# redis://:<password>@<服务器IP>:6379
+# redis://<服务器IP>:6379
 ```
 
 ## 📚 常用命令

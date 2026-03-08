@@ -1,4 +1,4 @@
-.PHONY: up down logs ps restart status clean help init
+.PHONY: up down logs ps restart status clean help init debug
 
 # 自动检测 docker compose 命令版本
 # Docker Compose V2 使用 "docker compose"
@@ -67,7 +67,6 @@ init:
 		echo "MONGO_PORT=27017" >> .env; \
 		echo "" >> .env; \
 		echo "# Redis 配置" >> .env; \
-		echo "REDIS_PASSWORD=redis123" >> .env; \
 		echo "REDIS_PORT=6379" >> .env; \
 		echo "创建 .env 文件，请根据需要修改配置"; \
 	fi
@@ -177,6 +176,23 @@ pull:
 	@echo "拉取所有服务镜像..."
 	$(DOCKER_COMPOSE) -f $(COMPOSE_FILE) pull
 
+# 调试信息
+debug:
+	@echo "=== Docker Compose 检测信息 ==="
+	@echo "检测到的命令: '$(DOCKER_COMPOSE)'"
+	@echo ""
+	@echo "=== 检查 docker compose (V2) ==="
+	@docker compose version 2>&1 || echo "未安装或不可用"
+	@echo ""
+	@echo "=== 检查 docker-compose (V1) ==="
+	@docker-compose --version 2>&1 || echo "未安装或不可用"
+	@echo ""
+	@echo "=== 环境信息 ==="
+	@echo "PATH: $(PATH)"
+	@echo ""
+	@which docker 2>&1 || echo "docker 命令未找到"
+	@which docker-compose 2>&1 || echo "docker-compose 命令未找到"
+
 # 帮助信息
 help:
 	@echo "╔════════════════════════════════════════════════════════════╗"
@@ -202,6 +218,7 @@ help:
 	@echo "  make network           - 查看网络信息"
 	@echo "  make pull              - 拉取所有服务镜像"
 	@echo "  make clean             - 停止并删除所有服务和数据卷（危险！）"
+	@echo "  make debug             - 显示 Docker Compose 检测信息（调试用）"
 	@echo ""
 	@echo "可用服务:"
 	@echo "  - mysql     (MySQL 8.0, 端口: 3306)"
@@ -221,7 +238,7 @@ help:
 	@echo "  - MySQL:      mysql -h <服务器IP> -P 3306 -u root -p"
 	@echo "  - PostgreSQL: psql -h <服务器IP> -p 5432 -U postgres"
 	@echo "  - MongoDB:    mongosh \"mongodb://admin:admin123@<服务器IP>:27017\""
-	@echo "  - Redis:      redis-cli -h <服务器IP> -p 6379 -a redis123"
+	@echo "  - Redis:      redis-cli -h <服务器IP> -p 6379"
 	@echo ""
 	@echo "检测到的 Docker Compose 命令: $(DOCKER_COMPOSE)"
 	@echo ""
