@@ -1,3 +1,7 @@
 **/nohup.out
 ignore
 t
+
+# 泄漏清理 2026-09-11:私钥不入库,真实文件走部署通道
+*.pem
+datascience/config/habor-core/private_key.pem
